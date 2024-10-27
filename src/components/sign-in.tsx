@@ -1,4 +1,5 @@
 import { signIn } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
 
 export default function SignIn() {
   return (
@@ -8,7 +9,7 @@ export default function SignIn() {
         await signIn("google");
       }}
     >
-      <button type="submit">Sign in with Google</button>
+      <Button type="submit">Sign in with Google</Button>
     </form>
   );
 }

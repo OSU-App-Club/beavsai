@@ -3,17 +3,23 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbopack",
+        "dev": "npm run db:generate && npm run db:migrate && next dev --turbopack",
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
         "format": "prettier --write .",
         "check-format": "prettier --check .",
         "type-check": "tsc --project tsconfig.json --pretty --noEmit && echo",
+        "db:generate": "dotenv -e .env.local -- prisma generate",
+        "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
+        "db:studio": "dotenv -e .env.local -- prisma studio",
+        "db:deploy": "dotenv -e .env.local -- prisma migrate deploy",
         "prepare": "husky"
     },
     "dependencies": {
+        "@auth/prisma-adapter": "^2.7.2",
         "@hookform/resolvers": "^3.9.0",
+        "@prisma/client": "^5.21.1",
         "@radix-ui/react-accordion": "^1.2.1",
         "@radix-ui/react-alert-dialog": "^1.1.2",
         "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -68,11 +74,13 @@
         "@types/node": "^20",
         "@types/react": "^18",
         "@types/react-dom": "^18",
+        "dotenv-cli": "^7.4.2",
         "eslint": "^8",
         "eslint-config-next": "15.0.1",
         "husky": "^9.1.6",
         "postcss": "^8",
         "prettier": "3.3.3",
+        "prisma": "^5.21.1",
         "tailwindcss": "^3.4.1",
         "typescript": "^5"
     }

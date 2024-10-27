@@ -25,7 +25,7 @@ jobs:
           node-version: "20"
 
       - name: Clean install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps --no-audit
 
       - name: Run lint
         run: npm run lint

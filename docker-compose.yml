@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: prisma_user
+      POSTGRES_PASSWORD: prisma_password
+      POSTGRES_DB: prisma_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - prisma_network
+
+volumes:
+  postgres_data:
+
+networks:
+  prisma_network:

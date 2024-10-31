@@ -117,6 +117,12 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             Ameya Bharadwaj
           </a>
         </td> 
+        <td align="center">
+          <a href="https://github.com/jvidos11">
+            <img src="https://images.weserv.nl/?url=github.com/jvidos11.png&fit=cover&mask=circle" width="80"><br>
+            Julian Vidos
+            </a>
+        </td>
       </tr>
     </tbody>
   </table>

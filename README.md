@@ -99,6 +99,12 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             [Full Name]
           </a>
         </td> -->
+        <td align="center">
+          <a href="https://github.com/ebalzan">
+            <img src="https://images.weserv.nl/?url=github.com/ebalzan.png&fit=cover&mask=circle" width="80"><br>
+            Eduardo Juchem Balzan
+            </a>
+        </td>
       </tr>
     </tbody>
   </table>

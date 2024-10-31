@@ -69,13 +69,20 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
           </a>
         </td>
         <!-- TEMPLATE BELOW (uncomment to include) -->
+        <!--<td align="center">
+          a href="https://github.com/Username">
+            img src="https://images.weserv.nl/?url=github.com/[Username].png&fit=cover&mask=circle" width="80"><br>
+            [Full Name]
+            </a>
+        </td> -->
         <td align="center">
-          a href="https://github.com/Damega621">
+          <a href="https://github.com/Damega621">
             img src="https://images.weserv.nl/?url=github.com/Damega621.png&fit=cover&mask=circle" width="80"><br>
             [Dario Mejia]
             </a>
-        </td> -->
+        </td>
       </tr>
     </tbody>
   </table>
 </div>
+

@@ -62,17 +62,18 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
   <table>
     <tbody>
       <tr>
+        <!-- TEMPLATE -->
+        <!-- <td align="center">
+          <a href="https://github.com/[username]">
+            <img src="https://images.weserv.nl/?url=github.com/[username].png&fit=cover&mask=circle" width="80"><br>
+            [Full Name]
+          </a>
+        </td> -->
         <td align="center">
           <a href="https://github.com/Nyumat">
             <img src="https://images.weserv.nl/?url=github.com/Nyumat.png&fit=cover&mask=circle" width="80"><br>
             Tom Nyuma
           </a>
-        </td>
-         <td align="center">
-          <a href="https://github.com/Srivats720">
-            <img src="https://images.weserv.nl/?url=github.com/Srivats720.png&fit=cover&mask=circle" width="80"><br>
-            Srivatsav Sundaresan
-            </a>
         </td>
         <td align="center">
           <a href="https://github.com/nirali112">
@@ -80,6 +81,12 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             Nirali Mehta
           </a>
         </td> 
+         <td align="center">
+          <a href="https://github.com/Srivats720">
+            <img src="https://images.weserv.nl/?url=github.com/Srivats720.png&fit=cover&mask=circle" width="80"><br>
+            Srivatsav Sundaresan
+            </a>
+        </td>
         <td align="center">
           <a href="https://github.com/SeanG-rsd">
             <img src="https://images.weserv.nl/?url=github.com/SeanG-rsd.png&fit=cover&mask=circle" width="80"><br>
@@ -98,13 +105,6 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             Muhammad Akbar
           </a>
         </td>
-        <!-- TEMPLATE BELOW -->
-        <!-- <td align="center">
-          <a href="https://github.com/[username]">
-            <img src="https://images.weserv.nl/?url=github.com/[username].png&fit=cover&mask=circle" width="80"><br>
-            [Full Name]
-          </a>
-        </td> -->
         <td align="center">
           <a href="https://github.com/ebalzan">
             <img src="https://images.weserv.nl/?url=github.com/ebalzan.png&fit=cover&mask=circle" width="80"><br>
@@ -115,4 +115,3 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
     </tbody>
   </table>
 </div>
-

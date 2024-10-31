@@ -68,34 +68,39 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             Tom Nyuma
           </a>
         </td>
-                <td align="center">
+        <td align="center">
           <a href="https://github.com/nirali112">
             <img src="https://images.weserv.nl/?url=github.com/nirali112.png&fit=cover&mask=circle" width="80"><br>
             Nirali Mehta
-            </a>
+          </a>
         </td> 
         <td align="center">
           <a href="https://github.com/SeanG-rsd">
             <img src="https://images.weserv.nl/?url=github.com/SeanG-rsd.png&fit=cover&mask=circle" width="80"><br>
             Sean Gutmann
-            </a>
+          </a>
         </td>
         <td align="center">
           <a href="https://github.com/Damega621">
-            img src="https://images.weserv.nl/?url=github.com/Damega621.png&fit=cover&mask=circle" width="80"><br>
+            <img src="https://images.weserv.nl/?url=github.com/Damega621.png&fit=cover&mask=circle" width="80"><br>
             Dario Mejia
             </a>
         </td>
-        <!-- TEMPLATE BELOW (uncomment to include) -->
-        <!--<td align="center">
-          a href="https://github.com/Username">
-            img src="https://images.weserv.nl/?url=github.com/[Username].png&fit=cover&mask=circle" width="80"><br>
+        <td align="center">
+          <a href="https://github.com/muhammadakbar7">
+            <img src="https://images.weserv.nl/?url=github.com/muhammadakbar7.png&fit=cover&mask=circle" width="80"><br>
+            Muhammad Akbar
+          </a>
+        </td>
+        <!-- TEMPLATE BELOW -->
+        <!-- <td align="center">
+          <a href="https://github.com/[username]">
+            <img src="https://images.weserv.nl/?url=github.com/[username].png&fit=cover&mask=circle" width="80"><br>
             [Full Name]
-            </a>
+          </a>
         </td> -->
       </tr>
-    </body>
-
+    </tbody>
   </table>
 </div>
 

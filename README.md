@@ -96,6 +96,7 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+
 </td> -->
 <td align="center">
 <a href="https://github.com/muhammadakbar7">

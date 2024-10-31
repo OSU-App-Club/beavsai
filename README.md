@@ -93,20 +93,24 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             <img src="https://images.weserv.nl/?url=github.com/[username].png&fit=cover&mask=circle" width="80"><br>
             [Full Name]
             </a>
+
 <<<<<<< HEAD
 <<<<<<< HEAD
-        </td> -->
-       <td align="center">
-          <a href="https://github.com/muhammadakbar7">
-            <img src="https://images.weserv.nl/?url=github.com/muhammadakbar7.png&fit=cover&mask=circle" width="80"><br>
-            Muhammad Akbar
-            </a>
+</td> -->
+<td align="center">
+<a href="https://github.com/muhammadakbar7">
+<img src="https://images.weserv.nl/?url=github.com/muhammadakbar7.png&fit=cover&mask=circle" width="80"><br>
+Muhammad Akbar
+</a>
 =======
+</td> -->
+
+> > > > > > > # 52d2a688a6f29187328ceb86f6207e251a4fc33e
+
         </td>  -->
->>>>>>> 52d2a688a6f29187328ceb86f6207e251a4fc33e
-=======
-        </td>  -->
->>>>>>> d3b1f0b2c7ac7172e2a2f80117f0b5e16e318e52
+
+> > > > > > > d3b1f0b2c7ac7172e2a2f80117f0b5e16e318e52
+
       </tr>
     </tbody>
 

@@ -68,28 +68,20 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             Tom Nyuma
           </a>
         </td>
-                <td align="center">
-          <a href="https://github.com/nirali112">
-            <img src="https://images.weserv.nl/?url=github.com/nirali112.png&fit=cover&mask=circle" width="80"><br>
-            Nirali Mehta
-            </a>
-        </td> 
-        <td align="center">
-          <a href="https://github.com/SeanG-rsd">
-            <img src="https://images.weserv.nl/?url=github.com/SeanG-rsd.png&fit=cover&mask=circle" width="80"><br>
-            Sean Gutmann
-            </a>
-        </td>
-
         <!-- TEMPLATE BELOW (uncomment to include) -->
         <!-- <td align="center">
           <a href="https://github.com/[username]">
             <img src="https://images.weserv.nl/?url=github.com/[username].png&fit=cover&mask=circle" width="80"><br>
             [Full Name]
             </a>
-        </td>  -->
+        </td> -->
+        <td align="center">
+          <a href="https://github.com/bharadam">
+            <img src="https://images.weserv.nl/?url=github.com/bharadam.png&fit=cover&mask=circle" width="80"><br>
+            [Ameya Bharadwaj]
+          </a>
+        </td> 
       </tr>
     </tbody>
-
   </table>
 </div>

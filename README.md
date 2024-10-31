@@ -68,13 +68,12 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             Tom Nyuma
           </a>
         </td>
-        <!-- TEMPLATE BELOW (uncomment to include) -->
-        <!-- <td align="center">
-          <a href="https://github.com/[username]">
-            <img src="https://images.weserv.nl/?url=github.com/[username].png&fit=cover&mask=circle" width="80"><br>
-            [Full Name]
+        <td align="center">
+          <a href="https://github.com/SeanG-rsd">
+            <img src="https://images.weserv.nl/?url=github.com/SeanG-rsd.png&fit=cover&mask=circle" width="80"><br>
+            Sean Gutmann
             </a>
-        </td> -->
+        </td>
       </tr>
     </tbody>
   </table>

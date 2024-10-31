@@ -1,6 +1,6 @@
-## BeavsAI
+## Beavs AI
 
-BeavsAI is an application that provides an AI Chatbot that is knowledgeable about OSU's courses. It allows OSU students to interact with an AI agent that can answer course-specific questions.
+Beavs AI is an application that provides an AI Chatbot that is knowledgeable about OSU's courses. It allows OSU students to interact with an AI agent that can answer course-specific questions.
 
 ## Project Prerequisites
 
@@ -27,29 +27,35 @@ BeavsAI is an application that provides an AI Chatbot that is knowledgeable abou
 > [!NOTE]
 > You may come across an peer dependency error when running this command, try `npm install --legacy-peer-deps`
 
-4. Create an AUTH_SECRET environment variable
+4. Create an `.env.local` file in the root directory of the project and add the following environment variables:
+
+   ```bash
+    DATABASE_URL="postgresql://prisma_user:prisma_password@localhost:5432/prisma_db"
+    AUTH_GOOGLE_ID=
+    AUTH_GOOGLE_SECRET=
+   ```
+
+5. Message [@nyumat](https://discord.com/users/700444827287945316) on Discord to get the OAuth credentials for the application.
+
+> [!WARNING]
+> Do not share these credentials with anyone else. You will not be able to run the application without them.
+
+6. Create an AUTH_SECRET environment variable
 
    ```bash
    npx auth secret
    ```
 
-5. Add this DATABASE_URL variable to .env.local
-
-   ```
-   DATABASE_URL="postgresql://prisma_user:prisma_password@localhost:5432/prisma_db"
-   ```
-
-6. Open a new terminal window and start up our Postgres database
+7. Start a local PostgreSQL database using Docker
 
    ```bash
-   docker compose up
+   docker compose up -d
    ```
 
-7. Run the Next.js App
+8. Run the Next.js App
    ```bash
    npm run dev
    ```
-
 
 <div align="start">
   <h2>Contributors</h2>
@@ -62,6 +68,7 @@ BeavsAI is an application that provides an AI Chatbot that is knowledgeable abou
             Tom Nyuma
           </a>
         </td>
+
         <!-- TEMPLATE BELOW (uncomment to include) -->
         <!-- <td align="center">
           <a href="https://github.com/[username]">
@@ -75,6 +82,13 @@ BeavsAI is an application that provides an AI Chatbot that is knowledgeable abou
             Nirali Mehta
             </a>
         </td> 
+
+        <td align="center">
+          <a href="https://github.com/SeanG-rsd">
+            <img src="https://images.weserv.nl/?url=github.com/SeanG-rsd.png&fit=cover&mask=circle" width="80"><br>
+            Sean Gutmann
+            </a>
+        </td>
       </tr>
     </tbody>
   </table>

@@ -68,6 +68,12 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
             Tom Nyuma
           </a>
         </td>
+         <td align="center">
+          <a href="https://github.com/Srivats720">
+            <img src="https://images.weserv.nl/?url=github.com/Srivats720.png&fit=cover&mask=circle" width="80"><br>
+            Srivatsav Sundaresan
+            </a>
+        </td>
         <td align="center">
           <a href="https://github.com/nirali112">
             <img src="https://images.weserv.nl/?url=github.com/nirali112.png&fit=cover&mask=circle" width="80"><br>

@@ -49,3 +49,34 @@ BeavsAI is an application that provides an AI Chatbot that is knowledgeable abou
    ```bash
    npm run dev
    ```
+
+
+<div align="start">
+  <h2>Contributors</h2>
+  <table>
+    <tbody>
+      <tr>
+        <td align="center">
+          <a href="https://github.com/Nyumat">
+            <img src="https://images.weserv.nl/?url=github.com/Nyumat.png&fit=cover&mask=circle" width="80"><br>
+            Tom Nyuma
+          </a>
+        </td>
+        <!-- TEMPLATE BELOW (uncomment to include) -->
+        <!-- <td align="center">
+          <a href="https://github.com/[username]">
+            <img src="https://images.weserv.nl/?url=github.com/[username].png&fit=cover&mask=circle" width="80"><br>
+            [Full Name]
+            </a>
+        </td>  -->
+                <td align="center">
+          <a href="https://github.com/nirali112">
+            <img src="https://images.weserv.nl/?url=github.com/nirali112.png&fit=cover&mask=circle" width="80"><br>
+            Nirali Mehta
+            </a>
+        </td> 
+      </tr>
+    </tbody>
+  </table>
+</div>
+

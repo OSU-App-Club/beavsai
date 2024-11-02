@@ -1,22 +1,18 @@
 name: Beavs AI Continuous Integration
 
-env:
-  HUSKY: 0
-  PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-  PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
 on:
   push:
     branches:
       - main
-  pull_request:
+  pull_request_target:
     branches:
       - main
 
 jobs:
   ci:
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -38,6 +34,12 @@ jobs:
 
       - name: Type-check
         run: npm run type-check
+
+      - name: Create .env.local file
+        run: |
+          echo "PINECONE_API_KEY=${{ secrets.PINECONE_API_KEY }}" >> .env.local
+          echo "PINECONE_INDEX_NAME=${{ secrets.PINECONE_INDEX_NAME }}" >> .env.local
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env.local
 
       - name: Build project
         run: npm run build

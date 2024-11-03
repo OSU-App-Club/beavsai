@@ -57,3 +57,14 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
+
+model CourseMaterial {
+  id          String   @id @default(uuid())
+  title       String   @unique
+  fileName    String
+  fileUrl     String
+  uploadedAt  DateTime @default(now())
+  description String?
+
+  @@map("course_materials")
+}

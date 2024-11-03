@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,6 +10,7 @@ import {
 import { signIn, signOut } from "@/lib/auth";
 import { type Session } from "next-auth";
 import Image from "next/image";
+import Link from "next/link";
 
 export function AuthPage({ session }: { session: Session | null }) {
   return (
@@ -57,6 +58,8 @@ export function AuthPage({ session }: { session: Session | null }) {
                 {session.user.image && (
                   <Image
                     src={session.user.image}
+                    width={40}
+                    height={40}
                     alt="Profile"
                     className="h-10 w-10 rounded-full"
                   />
@@ -78,6 +81,24 @@ export function AuthPage({ session }: { session: Session | null }) {
                   Sign out
                 </Button>
               </form>
+              <Link
+                href={"/upload"}
+                className={buttonVariants({ variant: "link" })}
+              >
+                Upload a file
+              </Link>
+              <Link
+                href={"/files"}
+                className={buttonVariants({ variant: "link" })}
+              >
+                View all files
+              </Link>
+              <Link
+                href={"/chat"}
+                className={buttonVariants({ variant: "link" })}
+              >
+                Chat with a file
+              </Link>
             </div>
           )}
         </CardContent>

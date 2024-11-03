@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Beavs AI
 
-## Getting Started
+Beavs AI is an application that provides an AI Chatbot that is knowledgeable about OSU's courses. It allows OSU students to interact with an AI agent that can answer course-specific questions.
 
-First, run the development server:
+## Project Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node: You should install the latest version of [Node](https://nodejs.org/en)
+- Docker: The download link is [here](https://www.docker.com/), make sure to choose the correct operating system.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Usage
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/OSU-App-Club/beavsai.git
+   ```
+2. Navigate to the project directory:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   cd ./beavsai
+   ```
 
-## Learn More
+3. Install all the required dependencies to run our Next.js App
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+> [!NOTE]
+> You may come across an peer dependency error when running this command, try `npm install --legacy-peer-deps`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Create an `.env.local` file in the root directory of the project and add the following environment variables:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+    DATABASE_URL="postgresql://prisma_user:prisma_password@localhost:5432/prisma_db"
+    AUTH_GOOGLE_ID=
+    AUTH_GOOGLE_SECRET=
+   ```
 
-## Deploy on Vercel
+5. Message [@nyumat](https://discord.com/users/700444827287945316) on Discord to get the OAuth credentials for the application.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+> [!WARNING]
+> Do not share these credentials with anyone else. You will not be able to run the application without them.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6. Create an AUTH_SECRET environment variable
+
+   ```bash
+   npx auth secret
+   ```
+
+7. Start a local PostgreSQL database using Docker
+
+   ```bash
+   docker compose up -d
+   ```
+
+8. Run the Next.js App
+   ```bash
+   npm run dev
+   ```
+
+## Contributors
+
+<a href="https://github.com/osu-app-club/beavsai/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=osu-app-club/beavsai" />
+</a>

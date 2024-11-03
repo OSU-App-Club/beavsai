@@ -1,8 +1,5 @@
 name: Beavs AI Continuous Integration
 
-env:
-  HUSKY: 0
-
 on:
   push:
     branches:
@@ -37,4 +34,8 @@ jobs:
         run: npm run type-check
 
       - name: Build project
+        env:
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+          PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: npm run build

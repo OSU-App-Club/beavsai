@@ -41,5 +41,6 @@ export async function GET(request: Request) {
     includeValues: true,
     includeMetadata: true,
   });
-  return NextResponse.json(response.matches[0].metadata);
+  console.log(response);
+  return NextResponse.json(response);
 }

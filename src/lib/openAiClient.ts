@@ -13,3 +13,5 @@ export const createEmbedding = async (text: string) => {
   });
   return embedding.data[0].embedding;
 };
+
+export { openai };

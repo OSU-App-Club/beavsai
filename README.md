@@ -101,6 +101,42 @@ If you encounter any issues while running the application, please refer to the f
    npm run db:generate
    ```
 
+## For the Noobies
+
+If you are new to web development, git, or any of the tools mentioned above, don't worry! We have a few resources to help you get started:
+
+- [Web Development 101](https://developer.mozilla.org/en-US/docs/Learn)
+- [Git Handbook](https://guides.github.com/introduction/git-handbook/)
+- [Node.js Documentation](https://nodejs.org/en/docs/)
+- [Docker Documentation](https://docs.docker.com/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [ESLint Documentation](https://eslint.org/docs/user-guide/getting-started)
+- [Prettier Documentation](https://prettier.io/docs/en/index.html)
+
+_No one is born a master, so don't be afraid to ask questions!_
+
+### Level-based Learning for Beavs AI
+
+Choose tasks aligned with your skill level to contribute effectively to Beavs AI:
+
+#### Beginner
+
+- **Frontend**: Build UI components for displaying syllabus content, style the interface to align with OSU branding, or implement basic API calls to fetch syllabus data.
+- **Backend**: Create straightforward API endpoints for querying syllabus content, validate and handle basic user inputs, or manage simple data interactions with PostgreSQL.
+
+#### Intermediate
+
+- **Frontend**: Implement interactive UI components for search functionality, handle input validation for queries, or manage component state effectively with React hooks.
+- **Backend**: Integrate with Pinecone for semantic search, manage user sessions with secure practices, or develop API endpoints that retrieve and format contextually relevant content for RAG responses.
+
+#### Advanced
+
+- **Frontend**: Optimize the rendering of search results for low-latency response times, implement advanced state management for caching syllabus queries, or introduce features that enhance user experience (e.g., query history, autocomplete).
+- **Backend**: Optimize Pinecone and database queries for speed and scalability, implement complex business logic for query preprocessing and RAG workflows, or enhance backend efficiency by streamlining Langchain workflows to dynamically handle complex queries with large language models.
+
 ## Contributors
 
 <a href="https://github.com/osu-app-club/beavsai/graphs/contributors">

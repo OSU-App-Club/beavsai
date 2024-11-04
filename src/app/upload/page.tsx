@@ -36,6 +36,7 @@ export default function UploadPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [cancelTokenSource] = useState(axios.CancelToken.source());
   const router = useRouter();
 
   const form = useForm<PdfUploadFormData>({
@@ -65,6 +66,10 @@ export default function UploadPage() {
 
       const file = e.dataTransfer.files?.[0];
       if (file && file.type === "application/pdf") {
+        if (file.size > 100 * 1024 * 1024) {
+          toast.error("File size exceeds 100MB");
+          return;
+        }
         setSelectedFile(file);
         form.setValue("file", file);
       } else {
@@ -77,6 +82,10 @@ export default function UploadPage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 100 * 1024 * 1024) {
+        toast.error("File size exceeds 100MB");
+        return;
+      }
       setSelectedFile(file);
       form.setValue("file", file);
     }
@@ -84,6 +93,12 @@ export default function UploadPage() {
 
   const removeFile = () => {
     setSelectedFile(null);
+  };
+
+  const cancelUpload = () => {
+    cancelTokenSource.cancel("Upload canceled by user");
+    setIsUploading(false);
+    setUploadProgress(0);
   };
 
   const onSubmit = async (data: PdfUploadFormData) => {
@@ -98,6 +113,7 @@ export default function UploadPage() {
     try {
       const response = await axios.post("/api/upload/pdf", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        cancelToken: cancelTokenSource.token,
         onUploadProgress: (progressEvent) => {
           if (!progressEvent.lengthComputable || !progressEvent.total) return;
           const progress = Math.round(
@@ -111,8 +127,16 @@ export default function UploadPage() {
         toast.success("File uploaded successfully");
         router.push("/files");
       }
-    } catch {
-      toast.error("An error occurred while uploading the file");
+    } catch (error: unknown) {
+      if (axios.isCancel(error)) {
+        toast.error("Upload canceled");
+      } else {
+        const errorMessage =
+          axios.isAxiosError(error) && error.response?.data?.error
+            ? error.response.data.error
+            : "An error occurred while uploading the file";
+        toast.error(errorMessage);
+      }
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
@@ -262,6 +286,9 @@ export default function UploadPage() {
                       </span>
                     </div>
                     <Progress value={uploadProgress} className="h-2" />
+                    <Button variant="outline" onClick={cancelUpload}>
+                      Cancel Upload
+                    </Button>
                   </div>
                 )}
 

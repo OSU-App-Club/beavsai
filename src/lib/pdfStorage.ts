@@ -2,20 +2,53 @@ import { r2Client } from "@/lib/cloudFlareClient";
 import { prisma } from "@/lib/prisma";
 import { type PdfRecord } from "@/lib/types";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PDFDocument } from "pdf-lib";
+
+/**
+ * Utility function to get the number of pages in a PDF file.
+ * @param fileBuffer The buffer of the PDF file.
+ * @returns Promise<number>
+ */
+async function getPdfPageCount(fileBuffer: ArrayBuffer): Promise<number> {
+  const pdfDoc = await PDFDocument.load(fileBuffer);
+  return pdfDoc.getPageCount();
+}
 
 /**
  * Uploads a PDF file to Cloudflare R2 and stores the metadata in our database.
  * @param fileBuffer The buffer of the PDF file to upload.
  * @param title The title of the PDF file.
  * @param description The description of the PDF file.
+ * @param userId The ID of the user uploading the file.
  * @returns Promise<PdfRecord>
  */
 export async function uploadPdfToR2(
   fileBuffer: ArrayBuffer,
+  userId: string,
   title?: string,
   description?: string,
 ): Promise<PdfRecord> {
   const fileName = `${crypto.randomUUID()}.pdf`;
+  const fileSize = fileBuffer.byteLength;
+  const pages = await getPdfPageCount(fileBuffer);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { CourseMaterial: true },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const currentStorageUsage = user.CourseMaterial.reduce(
+    (acc, material) => acc + material.fileSize,
+    0,
+  );
+
+  if (currentStorageUsage + fileSize > user.storageLimit) {
+    throw new Error("Storage limit exceeded");
+  }
 
   const uploadCommand = new PutObjectCommand({
     Bucket: process.env.R2_BUCKET_NAME,
@@ -28,12 +61,22 @@ export async function uploadPdfToR2(
 
   const fileUrl = `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${process.env.R2_BUCKET_NAME}/${fileName}`;
 
+  await prisma.user.update({
+    where: { id: userId },
+    data: { storageUsed: currentStorageUsage + fileSize },
+  });
+
   const pdfRecord = await prisma.courseMaterial.create({
     data: {
       title: title || "Untitled PDF",
       fileName,
       fileUrl,
       description,
+      pages,
+      fileSize,
+      user: {
+        connect: { id: userId },
+      },
     },
   });
 
@@ -49,10 +92,15 @@ export async function uploadPdfToR2(
 export async function deletePdfFromR2(fileId: string): Promise<void> {
   const pdfRecord = await prisma.courseMaterial.findUnique({
     where: { id: fileId },
+    include: { user: true },
   });
 
   if (!pdfRecord) {
     throw new Error("PDF not found");
+  }
+
+  if (!pdfRecord.user) {
+    throw new Error("User not found");
   }
 
   await r2Client.send(
@@ -62,5 +110,60 @@ export async function deletePdfFromR2(fileId: string): Promise<void> {
     }),
   );
 
+  await prisma.user.update({
+    where: { id: pdfRecord.user.id },
+    data: {
+      storageUsed: {
+        decrement: pdfRecord.fileSize,
+      },
+    },
+  });
+
+  if (pdfRecord.user.storageUsed < 0) {
+    await prisma.user.update({
+      where: { id: pdfRecord.user.id },
+      data: {
+        storageUsed: 0,
+      },
+    });
+  }
+
   await prisma.courseMaterial.delete({ where: { id: fileId } });
+}
+
+/**
+ * Calculate total number of files, total number of pages, average file size, and storage used by the user.
+ * @param userId The ID of the user.
+ * @returns Promise<{ totalFiles: number, totalPages: number, averageFileSize: number, storageUsed: number }>
+ * @throws Error if the user is not found.
+ */
+export async function calculateUserStats(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { CourseMaterial: true },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const totalFiles = user.CourseMaterial.length;
+  const totalPages = user.CourseMaterial.reduce(
+    (acc, material) => acc + material.pages,
+    0,
+  );
+  const averageFileSize =
+    totalFiles > 0
+      ? user.CourseMaterial.reduce(
+          (acc, material) => acc + material.fileSize,
+          0,
+        ) / totalFiles
+      : 0;
+
+  return {
+    totalFiles,
+    totalPages,
+    averageFileSize,
+    storageUsed: user.storageUsed,
+  };
 }

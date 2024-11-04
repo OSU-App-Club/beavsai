@@ -12,9 +12,7 @@ export const revalidate = 30;
  * @returns User files
  * @throws Error if user ID is not provided
  */
-export async function fetchFiles(
-  userId: string | undefined,
-): Promise<PdfRecord[]> {
+async function fetchFiles(userId: string | undefined): Promise<PdfRecord[]> {
   if (!userId) throw new Error("User ID is required");
   return prisma.courseMaterial.findMany({
     where: { userId },
@@ -37,9 +35,7 @@ export async function fetchFiles(
  * @returns User stats
  * @throws Error if user ID is not provided or user is not found
  */
-export async function fetchStats(
-  userId: string | undefined,
-): Promise<UserStats> {
+async function fetchStats(userId: string | undefined): Promise<UserStats> {
   if (!userId) throw new Error("User ID is required");
 
   const user = await prisma.user.findUnique({

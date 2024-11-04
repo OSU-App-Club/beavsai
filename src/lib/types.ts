@@ -17,4 +17,13 @@ export type PdfRecord = {
   fileName: string;
   fileUrl: string;
   description: string | null;
+  fileSize: number;
+  uploadedAt: Date;
+};
+
+export type UserStats = {
+  totalFiles: number;
+  totalPages: number;
+  averageFileSize: number;
+  storageUsed: number;
 };

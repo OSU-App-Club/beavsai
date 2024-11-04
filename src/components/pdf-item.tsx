@@ -6,15 +6,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { PdfRecord } from "@/lib/types";
 import { useState } from "react";
 
 type PdfItemProps = {
-  file: {
-    id: string;
-    title: string;
-    description: string;
-    fileUrl: string;
-  };
+  file: PdfRecord;
   onPreview: (id: string) => Promise<string>;
 };
 

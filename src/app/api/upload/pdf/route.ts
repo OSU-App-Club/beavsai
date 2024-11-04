@@ -3,6 +3,7 @@
  * It receives a PDF file and uploads it to Cloudflare R2.
  * https://nextjs.org/docs/app/building-your-application/routing/route-handlers
  */
+import { auth } from "@/lib/auth";
 import { uploadPdfToR2 } from "@/lib/pdfStorage";
 import { NextResponse } from "next/server";
 
@@ -16,9 +17,25 @@ export async function POST(request: Request) {
   // Convert the file to an easily uploadable format
   const fileBuffer = await file.arrayBuffer();
 
+  // Get the user ID from the authentication token
+  const authData = await auth();
+  const userId = authData?.user?.id;
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: "You must be logged in to upload a PDF" },
+      { status: 401 },
+    );
+  }
+
   try {
     // Upload the PDF to R2 and store the metadata in the database
-    const pdfRecord = await uploadPdfToR2(fileBuffer, title, description);
+    const pdfRecord = await uploadPdfToR2(
+      fileBuffer,
+      userId,
+      title,
+      description,
+    );
 
     return NextResponse.json({ message: "Upload successful", pdf: pdfRecord });
   } catch (error) {

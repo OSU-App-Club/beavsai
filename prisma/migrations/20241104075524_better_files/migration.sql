@@ -1,0 +1,12 @@
+-- AlterTable
+ALTER TABLE "course_materials" ADD COLUMN     "file_size" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "pages" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "userId" TEXT;
+
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "storageLimit" INTEGER NOT NULL DEFAULT 1073741824,
+ADD COLUMN     "storageUsed" INTEGER NOT NULL DEFAULT 0;
+
+-- AddForeignKey
+ALTER TABLE "course_materials" ADD CONSTRAINT "course_materials_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

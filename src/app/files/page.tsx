@@ -25,7 +25,7 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type PdfFile = {
@@ -78,7 +78,7 @@ export default function FilesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("date");
   const [loadingState, setLoadingState] = useState<LoadingState>("loading");
-  const [stats] = useState({
+  const [stats, setStats] = useState({
     totalFiles: 0,
     totalPages: 0,
     averageFileSize: 0,
@@ -86,6 +86,14 @@ export default function FilesPage() {
   });
 
   useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get("/api/files/stats");
+        setStats(response.data);
+      } catch {
+        toast.error("Failed to load stats");
+      }
+    };
     const fetchFiles = async () => {
       try {
         setLoadingState("loading");
@@ -98,6 +106,7 @@ export default function FilesPage() {
       }
     };
     fetchFiles();
+    fetchStats();
   }, []);
 
   const handlePreview = async (fileId: string) => {
@@ -105,11 +114,11 @@ export default function FilesPage() {
     return response.data.url;
   };
 
-  const handleDelete = async (fileId: string) => {
+  const handleDelete = useCallback(async (fileId: string) => {
     await axios.delete(`/api/files?id=${fileId}`);
     setFiles((files) => files.filter((file) => file.id !== fileId));
     toast.success("File deleted successfully");
-  };
+  }, []);
 
   const filteredFiles = files.filter(
     (file) =>
@@ -131,6 +140,21 @@ export default function FilesPage() {
     }
   });
 
+  const formatBytes = (bytes: number) => {
+    switch (true) {
+      case bytes < 1024:
+        return bytes + " Bytes";
+      case bytes < 1048576:
+        return (bytes / 1024).toFixed(2) + " KB";
+      case bytes < 1073741824:
+        return (bytes / 1048576).toFixed(2) + " MB";
+      case bytes < 1099511627776:
+        return (bytes / 1073741824).toFixed(2) + " GB";
+      default:
+        return (bytes / 1099511627776).toFixed(2) + " TB";
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto p-6">
@@ -144,6 +168,18 @@ export default function FilesPage() {
             </>
           ) : (
             <>
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader className="flex flex-row items-center space-x-2">
+                  <Clock className="w-4 h-4 text-purple-500" />
+                  <CardTitle>Average Size</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {formatBytes(stats.averageFileSize)}
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="flex flex-row items-center space-x-2">
                   <Files className="w-4 h-4 text-blue-500" />
@@ -174,31 +210,15 @@ export default function FilesPage() {
 
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="flex flex-row items-center space-x-2">
-                  <Clock className="w-4 h-4 text-purple-500" />
-                  <CardTitle>Average Size</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {stats.averageFileSize.toFixed(2)} MB
-                  </div>
-                  <Progress
-                    value={(stats.averageFileSize / 10) * 100}
-                    className="mt-2"
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="flex flex-row items-center space-x-2">
                   <HardDrive className="w-4 h-4 text-orange-500" />
                   <CardTitle>Storage Used</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {(stats.storageUsed / 1024).toFixed(2)} GB
+                    {formatBytes(stats.storageUsed)} / 50 MB
                   </div>
                   <Progress
-                    value={(stats.storageUsed / 10240) * 100}
+                    value={(stats.storageUsed / (50 * 1024 * 1024)) * 100}
                     className="mt-2"
                   />
                 </CardContent>

@@ -9,6 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -50,9 +51,12 @@ export function Navbar() {
   );
 
   const isActive = (path: string) => pathname === path;
-
   return (
-    <header className="sticky border-b-[1px] top-0 z-40 w-full">
+    <header
+      className={cn("sticky top-0 z-40 w-full", {
+        "border-b-[1px]": isActive("/chat"),
+      })}
+    >
       <div className="container h-14 px-4 w-screen flex justify-between">
         {/* Logo section */}
         <div className="font-bold flex items-center ml-4">

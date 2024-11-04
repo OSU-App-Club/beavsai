@@ -146,7 +146,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen py-12">
+    <div>
       <div className="container max-w-2xl mx-auto px-4">
         <Link
           href="/files"

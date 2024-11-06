@@ -250,7 +250,7 @@ export default function ChatPage() {
         </div>
         <ScrollArea className="flex-1">
           {chats.map((chat) => (
-            <ChatItem key={chat.id} chat={chat} />
+            <ChatItem key={crypto.randomUUID()} chat={chat} />
           ))}
         </ScrollArea>
       </aside>

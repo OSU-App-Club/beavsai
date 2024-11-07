@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import { PdfItem } from "@/components/pdf-item";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -11,14 +10,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PdfRecord } from "@/lib/models";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Files,
+  Search,
+  SlidersHorizontal,
+  Upload,
+  XCircle,
+} from "lucide-react";
+import Link from "next/link";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { deleteFile } from "./actions";
-import { PdfRecord } from "@/lib/types";
-import { Files, Search, SlidersHorizontal, Upload } from "lucide-react";
-import Link from "next/link";
 
 type FileListProps = {
   files: PdfRecord[];
+};
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 export const FileList = ({ files }: FileListProps) => {
@@ -26,14 +43,18 @@ export const FileList = ({ files }: FileListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("date");
   const [, startTransition] = useTransition();
+  const [, setIsDeleting] = useState<string | null>(null);
 
   const handleDelete = async (fileId: string) => {
+    setIsDeleting(fileId);
     startTransition(async () => {
       try {
         await deleteFile(fileId);
         setFileList((prev) => prev.filter((file) => file.id !== fileId));
+        setIsDeleting(null);
         toast.success("File deleted successfully");
       } catch {
+        setIsDeleting(null);
         toast.error("Failed to delete file");
       }
     });
@@ -71,20 +92,30 @@ export const FileList = ({ files }: FileListProps) => {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative flex-1 w-full md:max-w-md">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4" />
+          </div>
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-3 flex items-center hover:opacity-75"
+            >
+              <XCircle className="h-4 w-4" />
+            </button>
+          )}
           <Input
             placeholder="Search files..."
-            className="pl-10"
+            className="pl-10 pr-10 h-11"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 w-full md:w-auto">
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-11">
               <SlidersHorizontal className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -94,8 +125,11 @@ export const FileList = ({ files }: FileListProps) => {
               <SelectItem value="size">File size</SelectItem>
             </SelectContent>
           </Select>
-          <Link href="/upload">
-            <Button>
+          <Link href="/upload" className="flex-shrink-0">
+            <Button
+              className="h-11 bg-osu hover:bg-osu/90 text-white"
+              size="lg"
+            >
               <Upload className="w-4 h-4 mr-2" />
               Upload PDF
             </Button>
@@ -103,42 +137,57 @@ export const FileList = ({ files }: FileListProps) => {
         </div>
       </div>
 
-      {sortedFiles.length === 0 ? (
-        <div className="text-center py-12">
-          <Files className="w-12 h-12 mx-auto mb-4 text-gray-500" />
-          <h3 className="text-lg font-semibold mb-2">No files found</h3>
-          <p className="text-gray-500 mb-4">
-            {searchQuery
-              ? "No files match your search criteria"
-              : "Upload your first PDF to get started!"}
-          </p>
-          <Link href="/upload">
-            <Button>
-              <Upload className="w-4 h-4 mr-2" />
-              Upload PDF
-            </Button>
-          </Link>
-        </div>
-      ) : (
-        sortedFiles.map((file) => (
-          <div
-            key={file.id}
-            className="flex items-center justify-between p-4 rounded-lg border"
+      <AnimatePresence mode="wait">
+        {sortedFiles.length === 0 ? (
+          <motion.div
+            key="empty"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="text-center py-16 px-4"
           >
-            <div className="flex-1">
-              <PdfItem file={file} onPreview={handlePreview} />
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleDelete(file.id)}
-              className="ml-4 text-red-500 hover:text-red-700 hover:bg-red-50"
-            >
-              Delete
-            </Button>
-          </div>
-        ))
-      )}
+            <Files className="w-16 h-16 mx-auto mb-6" />
+            <h3 className="text-xl font-semibold mb-3">
+              {searchQuery ? "No matching files" : "No files uploaded yet"}
+            </h3>
+            <p className="mb-8 max-w-md mx-auto">
+              {searchQuery
+                ? "Try adjusting your search terms or clear the search to see all files"
+                : "Upload an initial PDF to give contextual information our AI can understand."}
+            </p>
+            <Link href="/upload">
+              <Button size="lg" className="bg-osu hover:bg-osu/90 text-white">
+                <Upload className="w-5 h-5 mr-2" />
+                Upload PDF
+              </Button>
+            </Link>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="list"
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="space-y-4"
+          >
+            {sortedFiles.map((file) => (
+              <motion.div
+                key={file.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <PdfItem
+                  file={file}
+                  onPreview={handlePreview}
+                  onDelete={handleDelete}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

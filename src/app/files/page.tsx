@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
+import { PdfRecord, UserStats } from "@/lib/models";
 import { prisma } from "@/lib/prisma";
-import { PdfRecord, UserStats } from "@/lib/types";
 import { FileList } from "./file-list";
 import { FileStats } from "./file-stats";
 
@@ -66,6 +66,12 @@ async function fetchStats(userId: string | undefined): Promise<UserStats> {
   };
 }
 
+async function lastUpdatedTimeStats() {
+  return prisma.courseMaterial.aggregate({
+    _max: { uploadedAt: true },
+  });
+}
+
 export default async function FilesPage() {
   // This is how we get the user session
   const session = await auth();
@@ -89,11 +95,15 @@ export default async function FilesPage() {
   // Nice! .all() would have thrown if *any* of the promises rejected
   const files = filesPromise.value;
   const stats = statsPromise.value;
+  const updatedAt = await lastUpdatedTimeStats();
 
   return (
     <div>
       <div className="container mx-auto p-6">
-        <FileStats stats={stats} />
+        <FileStats
+          stats={stats}
+          updatedAt={updatedAt._max.uploadedAt?.getDate()}
+        />
         <FileList files={files} />
       </div>
     </div>

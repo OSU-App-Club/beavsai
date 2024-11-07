@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   postgres:
-    image: postgres:15
+    image: ankane/pgvector:latest
     restart: always
     environment:
       POSTGRES_USER: prisma_user
@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: prisma_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:

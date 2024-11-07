@@ -58,7 +58,7 @@ export function NewChatDialog({
   };
 
   const handleStartWithFile = async () => {
-    if (selectedFile) {
+    if (selectedFile && !isCreating) {
       try {
         setIsCreating(true);
         await onCreateChat(selectedFile);

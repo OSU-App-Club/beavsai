@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 import { ChatArea } from "../(render)/chat-area";
 import { ChatList } from "../(render)/chat-list";
 
@@ -64,13 +65,32 @@ export default async function ChatPage(props: {
   if (!session) redirect("/login");
   const { id } = params;
 
-  const [chat, chats, files] = await Promise.all([
-    fetchChat(id),
-    fetchChats(),
-    fetchFiles(),
-  ]);
+  const [chatPromise, chatListPromise, filesPromise] = await Promise.allSettled(
+    [fetchChat(id), fetchChats(), fetchFiles()],
+  );
 
-  if (!chat) redirect("/chat");
+  if (chatPromise.status === "rejected") {
+    toast.error(chatPromise.reason.message);
+    redirect("/chat");
+  }
+
+  if (chatListPromise.status === "rejected") {
+    toast.error(chatListPromise.reason.message);
+    redirect("/chat");
+  }
+
+  if (filesPromise.status === "rejected") {
+    toast.error(filesPromise.reason.message);
+    redirect("/chat");
+  }
+
+  const chat = chatPromise.value;
+  const chats = chatListPromise.value;
+  const files = filesPromise.value;
+
+  if (!chat) {
+    redirect("/chat");
+  }
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)]">

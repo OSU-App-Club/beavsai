@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { PdfRecord, UserStats } from "@/lib/models";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 import { FileList } from "./file-list";
 import { FileStats } from "./file-stats";
 
@@ -76,6 +77,11 @@ export default async function FilesPage() {
   // This is how we get the user session
   const session = await auth();
   const userId = session?.user?.id;
+
+  // Protect the route
+  if (!session || !userId) {
+    redirect("/");
+  }
 
   // We use Promise.allSettled to fetch both files and stats in parallel
   const [filesPromise, statsPromise] = await Promise.allSettled([

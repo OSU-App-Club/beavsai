@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 import { ChatList } from "./(render)/chat-list";
 import { WelcomeMessage } from "./(render)/welcome-message";
 
@@ -31,7 +32,10 @@ async function fetchFiles() {
 
 export default async function ChatPage() {
   const session = await auth();
-  if (!session) redirect("/");
+  if (!session) {
+    toast.error("Unauthorized");
+    redirect("/");
+  }
 
   const [chatPromise, filePromise] = await Promise.allSettled([
     fetchChats(),
@@ -39,6 +43,7 @@ export default async function ChatPage() {
   ]);
 
   if (chatPromise.status === "rejected" || filePromise.status === "rejected") {
+    toast.error("Failed to fetch data");
     redirect("/");
   }
 

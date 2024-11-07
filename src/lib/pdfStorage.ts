@@ -1,6 +1,6 @@
 import { r2Client } from "@/lib/cloudFlareClient";
+import { type PdfRecord } from "@/lib/models";
 import { prisma } from "@/lib/prisma";
-import { type PdfRecord } from "@/lib/types";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { PDFDocument } from "pdf-lib";
 
@@ -55,6 +55,11 @@ export async function uploadPdfToR2(
     Key: fileName,
     Body: Buffer.from(fileBuffer),
     ContentType: "application/pdf",
+    Metadata: {
+      title: title || "Untitled PDF",
+      description: description || "",
+      userId,
+    },
   });
 
   await r2Client.send(uploadCommand);

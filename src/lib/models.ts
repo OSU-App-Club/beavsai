@@ -7,9 +7,18 @@ export const pdfUploadSchema = z.object({
     .instanceof(File)
     .refine((file) => file && file.type === "application/pdf", {
       message: "Please upload a PDF file",
-    }),
+    })
+    .nullable(),
 });
 export type PdfUploadFormData = z.infer<typeof pdfUploadSchema>;
+
+export const createChatSchema = z.object({
+  userId: z.string().uuid(),
+  fileId: z.string().optional(),
+  initialMessage: z.string().optional(),
+});
+
+export type CreateChatInput = z.infer<typeof createChatSchema>;
 
 export type PdfRecord = {
   id: string;

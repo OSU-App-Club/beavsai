@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -54,17 +55,21 @@ export function Navbar() {
   return (
     <header
       className={cn("sticky top-0 z-40 w-full", {
-        "border-b-[1px]": isActive("/chat"),
+        "border-b-[1px]": isActive("/chat") || pathname.startsWith("/chat/"),
       })}
     >
       <div className="container h-14 px-4 w-screen flex justify-between">
         {/* Logo section */}
         <div className="font-bold flex items-center ml-4">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="relative font-bold text-xl px-1 py-1">
-              <span className="absolute inset-0 bg-orange-600 transform rotate-2 rounded-sm -z-10"></span>
-              beavs.ai
-            </span>
+            <Image
+              src="/logo.png"
+              alt="Beavs AI"
+              width={32}
+              height={32}
+              className="scale-150"
+            />
+            <span className="text-xl mt-1 text-osu">Beavs AI</span>
           </Link>
         </div>
 
@@ -84,8 +89,8 @@ export function Navbar() {
               <SheetHeader>
                 <SheetTitle className="font-bold text-xl">
                   <span className="relative font-bold text-xl px-1 py-1">
-                    <span className="absolute inset-0 bg-orange-600 transform rotate-2 rounded-sm -z-10"></span>
-                    beavs.ai
+                    <span className="absolute inset-0 bg-osu transform rotate-2 rounded-sm -z-10"></span>
+                    Beavs AI
                   </span>
                 </SheetTitle>
               </SheetHeader>

@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PdfRecord } from "@/lib/models";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   Clock,
   Download,
@@ -47,7 +46,6 @@ const formatDate = (date: Date) => {
 
 export function PdfItem({ file, onPreview, onDelete }: PdfItemProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [previewError, setPreviewError] = useState(false);
@@ -61,6 +59,9 @@ export function PdfItem({ file, onPreview, onDelete }: PdfItemProps) {
         try {
           const url = await onPreview(file.id);
           if (!url) throw new Error("No preview URL received");
+          if (url.endsWith(".pdf")) {
+            setPreviewUrl(url);
+          }
           setPreviewUrl(url);
         } catch (error) {
           setPreviewError(true);
@@ -79,7 +80,6 @@ export function PdfItem({ file, onPreview, onDelete }: PdfItemProps) {
         }
         break;
       case "delete":
-        setIsDeleting(true);
         onDelete(file.id);
         break;
     }
@@ -190,27 +190,14 @@ export function PdfItem({ file, onPreview, onDelete }: PdfItemProps) {
                   previewUrl,
                 )}&embedded=true`}
                 className="h-full w-full"
-                frameBorder="0"
-                scrolling="no"
+                title="Preview"
+                loading="lazy"
                 onError={() => setPreviewError(true)}
               />
             ) : null}
           </div>
         </DialogContent>
       </Dialog>
-
-      <AnimatePresence>
-        {isDeleting && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center bg-gray-900/50 rounded-lg"
-          >
-            <span className="text-sm text-[#dc4405]">Deleting...</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

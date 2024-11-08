@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PdfUploadDialog } from "@/components/upload-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Files,
@@ -170,7 +171,7 @@ export const FileList = () => {
               <SelectItem value="size">File size</SelectItem>
             </SelectContent>
           </Select>
-          <Link href="/upload" className="flex-shrink-0">
+          <PdfUploadDialog>
             <Button
               className="h-11 bg-osu hover:bg-osu/90 text-white"
               size="lg"
@@ -178,7 +179,7 @@ export const FileList = () => {
               <Upload className="w-4 h-4 mr-2" />
               Upload PDF
             </Button>
-          </Link>
+          </PdfUploadDialog>
         </div>
       </div>
 

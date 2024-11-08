@@ -84,7 +84,7 @@ export const FileStats = ({ stats }: FileStatsProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats_data.map((item) =>
           item.type === "upload" ? (
-            <PdfUploadDialog key={item.title} />
+            <PdfUploadDialog key={item.title} mainUploader />
           ) : (
             <Card key={item.title}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">

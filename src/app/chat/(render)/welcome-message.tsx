@@ -82,9 +82,9 @@ export function WelcomeMessage({ session }: WelcomeMessageProps) {
 
   const handleFeatureClick = (feature: string) => {
     toast.info("Coming Soon!", {
-      description: `${feature} feature will be available in a future update.`,
+      description: `The ${feature} feature will be available in a future update to Beavs AI.`,
       duration: 3000,
-      position: "top-center",
+      position: "bottom-right",
       action: {
         label: "Dismiss",
         onClick: () => toast.dismiss(),

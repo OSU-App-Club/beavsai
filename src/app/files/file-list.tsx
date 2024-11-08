@@ -22,7 +22,6 @@ import {
   Upload,
   XCircle,
 } from "lucide-react";
-import Link from "next/link";
 import { useContext, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { deleteFile } from "./actions";
@@ -171,6 +170,7 @@ export const FileList = () => {
               <SelectItem value="size">File size</SelectItem>
             </SelectContent>
           </Select>
+
           <PdfUploadDialog>
             <Button
               className="h-11 bg-osu hover:bg-osu/90 text-white"
@@ -207,12 +207,12 @@ export const FileList = () => {
                   ? "Files you upload will appear here in your personal collection."
                   : "Upload a PDF to share or keep private in your collection."}
             </p>
-            <Link href="/upload">
+            <PdfUploadDialog>
               <Button size="lg" className="bg-osu hover:bg-osu/90 text-white">
                 <Upload className="w-5 h-5 mr-2" />
                 Upload PDF
               </Button>
-            </Link>
+            </PdfUploadDialog>
           </motion.div>
         ) : (
           <motion.div

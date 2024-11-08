@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { PdfRecord, UserStats } from "@/lib/models";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import FilesProvider from "./context";
 import { FileList } from "./file-list";
 import { FileStats } from "./file-stats";
 
@@ -14,12 +15,15 @@ export const revalidate = 30;
  * @throws Error if user ID is not provided
  */
 async function fetchFiles(userId: string | undefined): Promise<PdfRecord[]> {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
   if (!userId) throw new Error("User ID is required");
-  return prisma.courseMaterial.findMany({
-    where: { userId },
+  const maybeFiles = await prisma.courseMaterial.findMany({
     select: {
       id: true,
+      userId: true,
       title: true,
+      visibility: true,
       fileName: true,
       fileUrl: true,
       description: true,
@@ -28,6 +32,20 @@ async function fetchFiles(userId: string | undefined): Promise<PdfRecord[]> {
     },
     orderBy: { uploadedAt: "desc" },
   });
+
+  if (maybeFiles) {
+    return maybeFiles.map((file) => ({
+      id: file.id,
+      title: file.title,
+      fileName: file.fileName,
+      fileUrl: file.fileUrl,
+      description: file.description,
+      fileSize: file.fileSize,
+      uploadedAt: file.uploadedAt,
+      visibility: file.visibility,
+      isOwner: file.userId === userId,
+    }));
+  } else return [];
 }
 
 /**
@@ -106,11 +124,13 @@ export default async function FilesPage() {
   return (
     <div>
       <div className="container mx-auto p-6">
-        <FileStats
-          stats={stats}
-          updatedAt={updatedAt._max.uploadedAt?.getDate()}
-        />
-        <FileList files={files} />
+        <FilesProvider filesList={files}>
+          <FileStats
+            stats={stats}
+            updatedAt={updatedAt._max.uploadedAt?.getDate()}
+          />
+          <FileList />
+        </FilesProvider>
       </div>
     </div>
   );

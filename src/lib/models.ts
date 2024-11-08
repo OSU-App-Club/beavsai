@@ -9,6 +9,7 @@ export const pdfUploadSchema = z.object({
       message: "Please upload a PDF file",
     })
     .nullable(),
+  visibility: z.enum(["PUBLIC", "PRIVATE"]),
 });
 export type PdfUploadFormData = z.infer<typeof pdfUploadSchema>;
 
@@ -28,6 +29,8 @@ export type PdfRecord = {
   description: string | null;
   fileSize: number;
   uploadedAt: Date;
+  visibility: "PUBLIC" | "PRIVATE";
+  isOwner: boolean;
 };
 
 export type UserStats = {

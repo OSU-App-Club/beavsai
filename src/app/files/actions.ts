@@ -1,7 +1,8 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { deletePdfFromR2 } from "@/lib/pdfStorage";
+import { PdfRecord, type PdfUploadFormData } from "@/lib/models";
+import { deletePdfFromR2, uploadPdfToR2 } from "@/lib/pdfStorage";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -18,4 +19,39 @@ export async function deleteFile(fileId: string): Promise<void> {
   if (!session?.user?.id) throw new Error("User ID is required");
   await deletePdfFromR2(fileId);
   revalidatePath("/files");
+}
+
+type UploadPDFAction = {
+  fileBuffer: ArrayBuffer;
+  formData: Omit<PdfUploadFormData, "file">;
+};
+export async function uploadPdf({
+  fileBuffer,
+  formData,
+}: UploadPDFAction): Promise<PdfRecord> {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+  if (!session?.user?.id) throw new Error("User ID is required");
+
+  const userId = session.user.id;
+  const { title, description, visibility } = formData;
+
+  try {
+    const pdfRecord = await uploadPdfToR2(
+      fileBuffer,
+      visibility,
+      userId,
+      title,
+      description,
+    );
+
+    revalidatePath("/files");
+    return pdfRecord;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to upload PDF: ${error.message}`);
+    }
+
+    throw new Error("Failed to upload PDF");
+  }
 }

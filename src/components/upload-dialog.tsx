@@ -28,11 +28,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { FileText, Loader2, Upload, X } from "lucide-react";
-import { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export function PdfUploadDialog() {
+interface PdfUploadDialogProps {
+  children?: React.ReactNode;
+}
+
+export function PdfUploadDialog({ children }: PdfUploadDialogProps) {
   const fileContext = useContext(FilesContext);
   const [isOpen, setIsOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -181,25 +185,29 @@ export function PdfUploadDialog() {
 
   return (
     <>
-      <div
-        className="bg-background/95 p-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow cursor-pointer"
-        onClick={() => setIsOpen(true)}
-      >
-        <div className="flex flex-col space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Upload</p>
-          <div className="flex items-center gap-2">
-            <Upload className="h-4 w-4" />
-            <span className="text-2xl font-bold">Add PDF</span>
+      {!children ? (
+        <div
+          className="bg-background/95 p-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        >
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm font-medium text-muted-foreground">Upload</p>
+            <div className="flex items-center gap-2">
+              <Upload className="h-4 w-4" />
+              <span className="text-2xl font-bold">Add PDF</span>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div onClick={() => setIsOpen(true)}>{children}</div>
+      )}
 
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Upload PDF Document</DialogTitle>
             <DialogDescription>
-              Share your document with the community
+              Fill in the details and upload your PDF document to Beavs AI.
             </DialogDescription>
           </DialogHeader>
 

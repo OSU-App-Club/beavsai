@@ -25,7 +25,7 @@ export function Navbar() {
   }
 
   const routes = [
-    { href: "/upload", label: "Upload" },
+    { href: "/files?upload=true", label: "Upload" },
     { href: "/files", label: "Files" },
     { href: "/chat", label: "Chat" },
   ];

@@ -30,7 +30,7 @@ export function AuthPage({ session }: { session: Session | null }) {
                 "use server";
                 await signIn("google", {
                   redirect: true,
-                  redirectTo: "/upload",
+                  redirectTo: "/files",
                 });
               }}
             >
@@ -69,7 +69,7 @@ export function AuthPage({ session }: { session: Session | null }) {
                 </Button>
               </form>
               <Link
-                href={"/upload"}
+                href={"/files?upload=true"}
                 className={buttonVariants({ variant: "link" })}
               >
                 Upload a file

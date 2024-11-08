@@ -28,15 +28,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { FileText, Loader2, Upload, X } from "lucide-react";
-import React, { useCallback, useContext, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 interface PdfUploadDialogProps {
   children?: React.ReactNode;
+  id?: string;
+  mainUploader?: boolean;
 }
 
-export function PdfUploadDialog({ children }: PdfUploadDialogProps) {
+export function PdfUploadDialog({
+  children,
+  mainUploader = false,
+}: PdfUploadDialogProps) {
   const fileContext = useContext(FilesContext);
   const [isOpen, setIsOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -44,6 +50,21 @@ export function PdfUploadDialog({ children }: PdfUploadDialogProps) {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [cancelTokenSource] = useState(axios.CancelToken.source());
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Only open if this is the main uploader and the upload parameter exists
+    if (mainUploader && searchParams.has("upload") && !isOpen) {
+      setIsOpen(true);
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("upload");
+      window.history.replaceState(
+        {},
+        "",
+        `${window.location.pathname}?${params}`,
+      );
+    }
+  }, [searchParams, mainUploader, isOpen]);
 
   const form = useForm<PdfUploadFormData>({
     resolver: zodResolver(pdfUploadSchema),

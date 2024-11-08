@@ -24,11 +24,12 @@ async function getPdfPageCount(fileBuffer: ArrayBuffer): Promise<number> {
  */
 export async function uploadPdfToR2(
   fileBuffer: ArrayBuffer,
+  visibility: "PUBLIC" | "PRIVATE",
   userId: string,
-  title?: string,
+  title: string,
   description?: string,
 ): Promise<PdfRecord> {
-  const fileName = `${crypto.randomUUID()}.pdf`;
+  const fileName = `${title?.replace(/\s/g, "-")}-${Date.now()}.pdf`;
   const fileSize = fileBuffer.byteLength;
   const pages = await getPdfPageCount(fileBuffer);
 
@@ -79,13 +80,16 @@ export async function uploadPdfToR2(
       description,
       pages,
       fileSize,
+      visibility,
       user: {
         connect: { id: userId },
       },
     },
   });
 
-  return pdfRecord;
+  const isOwner = pdfRecord.userId === userId;
+
+  return { ...pdfRecord, isOwner };
 }
 
 /**

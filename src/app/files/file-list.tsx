@@ -10,23 +10,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PdfRecord } from "@/lib/models";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Files,
+  Globe,
+  Lock,
   Search,
   SlidersHorizontal,
   Upload,
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useContext, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { deleteFile } from "./actions";
-
-type FileListProps = {
-  files: PdfRecord[];
-};
+import { FilesContext } from "./context";
 
 const container = {
   hidden: { opacity: 0 },
@@ -38,10 +37,13 @@ const container = {
   },
 };
 
-export const FileList = ({ files }: FileListProps) => {
-  const [fileList, setFileList] = useState<PdfRecord[]>(files);
+export const FileList = () => {
+  const fileContext = useContext(FilesContext);
+  const files = fileContext?.files || [];
+  const setFileList = fileContext?.setFiles || (() => "No files found");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("date");
+  const [visibilityFilter, setVisibilityFilter] = useState("all"); // 'all' or 'private'
   const [, startTransition] = useTransition();
   const [, setIsDeleting] = useState<string | null>(null);
 
@@ -53,10 +55,11 @@ export const FileList = ({ files }: FileListProps) => {
         setFileList((prev) => prev.filter((file) => file.id !== fileId));
         setIsDeleting(null);
         toast.success("File deleted successfully");
-      } catch {
-        setIsDeleting(null);
-        toast.error("Failed to delete file");
+      } catch (error) {
+        if (error instanceof Error) toast.error(error.message);
+        else toast.error("Failed to delete file");
       }
+      setIsDeleting(null);
     });
   };
 
@@ -71,13 +74,28 @@ export const FileList = ({ files }: FileListProps) => {
     }
   };
 
-  const filteredFiles = fileList.filter(
+  // Filter files based on visibility and ownership
+  const filteredFiles = files.filter((file) => {
+    if (visibilityFilter === "all") {
+      // Show all public files and private files owned by the user
+      return (
+        file.visibility === "PUBLIC" ||
+        (file.visibility === "PRIVATE" && file.isOwner)
+      );
+    } else {
+      // "My Files" tab - only show files owned by the user
+      return file.isOwner;
+    }
+  });
+
+  // Then filter by search query
+  const searchFilteredFiles = filteredFiles.filter(
     (file) =>
       file.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       file.description?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const sortedFiles = [...filteredFiles].sort((a, b) => {
+  const sortedFiles = [...searchFilteredFiles].sort((a, b) => {
     switch (sortBy) {
       case "name":
         return a.title.localeCompare(b.title);
@@ -91,9 +109,36 @@ export const FileList = ({ files }: FileListProps) => {
     }
   });
 
+  // Get counts for the tabs
+  const allFilesCount = files.filter(
+    (file) =>
+      file.visibility === "PUBLIC" ||
+      (file.visibility === "PRIVATE" && file.isOwner),
+  ).length;
+  const myFilesCount = files.filter((file) => file.isOwner).length;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="flex gap-4 items-center w-full md:w-auto">
+          <Tabs
+            defaultValue="all"
+            value={visibilityFilter}
+            onValueChange={setVisibilityFilter}
+            className="w-full md:w-auto"
+          >
+            <TabsList>
+              <TabsTrigger value="all" className="gap-2">
+                <Globe className="h-4 w-4" />
+                All Files ({allFilesCount})
+              </TabsTrigger>
+              <TabsTrigger value="private" className="gap-2">
+                <Lock className="h-4 w-4" />
+                My Files ({myFilesCount})
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
         <div className="relative flex-1 w-full md:max-w-md">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4" />
@@ -148,12 +193,18 @@ export const FileList = ({ files }: FileListProps) => {
           >
             <Files className="w-16 h-16 mx-auto mb-6" />
             <h3 className="text-xl font-semibold mb-3">
-              {searchQuery ? "No matching files" : "No files uploaded yet"}
+              {searchQuery
+                ? "No matching files"
+                : visibilityFilter === "private"
+                  ? "No files found in your collection"
+                  : "No files uploaded yet"}
             </h3>
             <p className="mb-8 max-w-md mx-auto">
               {searchQuery
                 ? "Try adjusting your search terms or clear the search to see all files"
-                : "Upload an initial PDF to give contextual information our AI can understand."}
+                : visibilityFilter === "private"
+                  ? "Files you upload will appear here in your personal collection."
+                  : "Upload a PDF to share or keep private in your collection."}
             </p>
             <Link href="/upload">
               <Button size="lg" className="bg-osu hover:bg-osu/90 text-white">

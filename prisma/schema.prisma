@@ -9,6 +9,11 @@ datasource db {
   extensions = [vector]
 }
 
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
@@ -74,10 +79,9 @@ model CourseMaterial {
   pages         Int             @default(0)
   fileSize      Int             @default(0) @map("file_size")
   userId        String?
+  visibility    Visibility      @default(PRIVATE)
   Chat          Chat[]
   user          User?           @relation(fields: [userId], references: [id])
-  DocumentChunk DocumentChunk[]
-  Embedding     Embedding[]
 
   @@map("course_materials")
 }
@@ -105,26 +109,4 @@ model Message {
   chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@map("messages")
-}
-
-model DocumentChunk {
-  id         String         @id @default(cuid())
-  content    String
-  embeddings Unsupported("vector(1536)")?
-  pageNumber Int
-  materialId String
-  material   CourseMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
-
-  @@map("document_chunks")
-}
-
-model Embedding {
-  id         String         @id @default(cuid())
-  content    String
-  embedding  Unsupported("vector(1536)")?
-  pageNumber Int
-  materialId String
-  material   CourseMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
-
-  @@map("embeddings")
 }

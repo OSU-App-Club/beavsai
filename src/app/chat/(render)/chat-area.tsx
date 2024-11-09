@@ -22,7 +22,7 @@ interface ChatAreaProps {
   chatId: string;
   initialMessage?: string;
   initialMessages: Message[];
-  fileContext?: string | null;
+  fileName?: string;
   session: Session;
 }
 
@@ -30,7 +30,7 @@ export function ChatArea({
   chatId,
   initialMessage,
   initialMessages,
-  fileContext,
+  fileName,
   session,
 }: ChatAreaProps) {
   const router = useRouter();
@@ -52,7 +52,7 @@ export function ChatArea({
         })),
       body: {
         chatId,
-        fileContext,
+        fileName,
       },
     });
 

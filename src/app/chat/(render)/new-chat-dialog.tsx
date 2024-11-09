@@ -61,9 +61,13 @@ export function NewChatDialog({
     if (selectedFile && !isCreating) {
       try {
         setIsCreating(true);
-        await onCreateChat(selectedFile);
+        const chat = await onCreateChat(selectedFile);
+        if (!chat) {
+          throw new Error("Failed to create chat");
+        }
         setIsFileDialogOpen(false);
         onOpenChange(false);
+        router.push(`/chat/${chat.id}`);
       } catch (error) {
         console.error("Failed to create chat with file:", error);
       } finally {
@@ -144,7 +148,7 @@ export function NewChatDialog({
               onClick={handleStartWithFile}
               disabled={!selectedFile || isCreating}
             >
-              Start Chat
+              {isCreating ? "Creating..." : "Start Chat"}
             </Button>
           </DialogFooter>
         </DialogContent>

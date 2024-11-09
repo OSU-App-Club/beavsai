@@ -1,9 +1,24 @@
 import { Pinecone } from "@pinecone-database/pinecone";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
-const pinecone = new Pinecone({
+export const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY as string,
 });
 
-const index = pinecone.index(process.env.PINECONE_INDEX_NAME as string);
+type CourseMaterialMetadata = {
+  title?: string;
+  description?: string;
+  userId?: string;
+  fileId?: string;
+  pageNumber?: number;
+  fileName?: string;
+  visibility?: string;
+  text?: string;
+};
 
-export { index };
+const pineconeIndex = pinecone.index<CourseMaterialMetadata>(
+  process.env.PINECONE_INDEX_NAME as string,
+);
+
+export { pineconeIndex };

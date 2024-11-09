@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { CreateChatInput } from "@/lib/models";
 import { prisma } from "@/lib/prisma";
+import axios from "axios";
 import { Session } from "next-auth";
 import { revalidatePath } from "next/cache";
 
@@ -19,6 +20,30 @@ export async function createChat(input: CreateChatInput, session: Session) {
 
   if (session?.user?.id !== input.userId) {
     throw new Error("Unauthorized");
+  }
+
+  if (input.fileId) {
+    const file = await prisma.courseMaterial.findUnique({
+      where: {
+        id: input.fileId,
+      },
+    });
+
+    if (!file) {
+      throw new Error("File not found");
+    }
+
+    if (file.userId !== input.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    try {
+      await axios.post("http://localhost:3000/api/embeddings", {
+        fileName: file.fileName,
+      });
+    } catch (error) {
+      console.error("Failed to create embeddings:", error);
+    }
   }
 
   const chat = await prisma.chat.create({
@@ -59,11 +84,21 @@ export async function deleteChat(chatId: string) {
     where: {
       id: chatId,
     },
+    include: {
+      CourseMaterial: true,
+    },
   });
   if (!chat) throw new Error("Chat not found");
   // Check if the chat belongs to the user
   if (chat.userId !== session.user.id) throw new Error("Unauthorized");
-  // Delete the chat
+
+  // If the chat has indexed embeddings in pinecone
+  if (chat.CourseMaterial?.isIndexed) {
+    // Delete the document(s) from pinecone
+    await axios.delete(`http://localhost:3000/api/embeddings?chatId=${chatId}`);
+  }
+
+  // Finally, delete the chat
   await prisma.chat.delete({
     where: {
       id: chatId,

@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
+import axios from "axios";
+import { type Result } from "../embeddings/route";
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +14,7 @@ export async function POST(req: Request) {
     if (req.headers.get("content-type") !== "application/json")
       return new Response("Invalid content type", { status: 400 });
 
-    const { messages, chatId, fileContext } = await req.json();
+    const { messages, chatId, fileName } = await req.json();
 
     const chat = await prisma.chat.findUnique({
       where: {
@@ -45,6 +47,31 @@ export async function POST(req: Request) {
             role: userMessage.role,
           },
         });
+      }
+    }
+
+    let fileContext = "";
+
+    if (fileName) {
+      const message = await prisma.message.findFirst({
+        where: {
+          chatId,
+          role: "user",
+        },
+      });
+      if (!message) throw new Error("No message found");
+
+      const response = await axios.get(
+        `http://localhost:3000/api/embeddings?query=${message.content}`,
+      );
+
+      const results = response.data.results as Result[];
+
+      if (results.length > 0) {
+        // Merge all TopK results into a single string
+        fileContext = results.map((result: Result) => result.text).join("\n");
+      } else {
+        fileContext = "";
       }
     }
 

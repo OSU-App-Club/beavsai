@@ -1,5 +1,6 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import fetch from "node-fetch";
 
 function checkEnvVariable(variableName: string) {
   if (!process.env[variableName]) {
@@ -50,4 +51,18 @@ export async function getPresignedUrl(fileName: string) {
     console.error("Failed to generate presigned URL", error);
     throw new Error("Failed to generate presigned URL");
   }
+}
+
+/**
+ * Loads a R2-stored PDF document from an authenticated presigned URL.
+ * It returns a promise that resolves with the PDF as a Blob object.
+ * This will be used to process the PDF into chunks.
+ */
+export async function loadDocumentFromURL(presignedUrl: string): Promise<Blob> {
+  const response = await fetch(presignedUrl);
+  if (!response.ok)
+    throw new Error(`Failed to download PDF: ${response.statusText}`);
+
+  const arrayBuffer = await response.arrayBuffer();
+  return new Blob([arrayBuffer], { type: "application/pdf" });
 }

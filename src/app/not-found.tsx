@@ -9,7 +9,7 @@ export default function NotFoundPage() {
         <div className="row">
           <div className="text-center -translate-y-1/2">
             <div className="relative">
-              <h1 className="relative text-9xl tracking-tighter-less text-shadow font-sans font-bold">
+              <h1 className="relative text-9xl tracking-tighter-less text-shadow font-sans font-bold text-osu">
                 <span>4</span>
                 <span>0</span>
                 <span>4</span>

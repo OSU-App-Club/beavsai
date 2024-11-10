@@ -1,8 +1,14 @@
 "use client";
 
-import { PdfRecord } from "@/lib/models";
+import { PdfRecord, UserStats } from "@/lib/models";
 import axios from "axios";
-import { createContext, ReactNode, useCallback, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { deleteFile } from "./actions";
 
@@ -62,5 +68,92 @@ export default function FilesProvider({
     >
       {children}
     </FilesContext.Provider>
+  );
+}
+
+type FileStatsContextType = {
+  stats: UserStats;
+  updatedAt: number | undefined;
+  retrieveStats: () => Promise<void>;
+  setStats: React.Dispatch<React.SetStateAction<UserStats>>;
+  setUpdatedAt: React.Dispatch<React.SetStateAction<number | undefined>>;
+  progressValues: Progress;
+  setProgressValues: React.Dispatch<React.SetStateAction<Progress>>;
+};
+
+type Progress = {
+  files: number;
+  pages: number;
+  storage: number;
+};
+
+export const FileStatsContext = createContext<FileStatsContextType | undefined>(
+  undefined,
+);
+
+export function FileStatsProvider({
+  children,
+  initialStats,
+  initialUpdatedAt,
+}: {
+  children: ReactNode;
+  initialStats: UserStats;
+  initialUpdatedAt: number | undefined;
+}) {
+  const [stats, setStats] = useState<UserStats>(initialStats);
+  const [updatedAt, setUpdatedAt] = useState<number | undefined>(
+    initialUpdatedAt,
+  );
+  const [progressValues, setProgressValues] = useState<Progress>({
+    files: 0,
+    pages: 0,
+    storage: 0,
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!stats) return;
+      setProgressValues({
+        files: (stats.totalFiles / 100) * 100,
+        pages: (stats.totalPages / 1000) * 100,
+        storage: (stats.storageUsed / (50 * 1024 * 1024)) * 100,
+      });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [stats]);
+
+  const retrieveStats = useCallback(async () => {
+    try {
+      const response = await axios.get("/api/stats");
+      setStats(response.data.stats);
+      setUpdatedAt(Date.now());
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to retrieve stats");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    retrieveStats();
+  }, [retrieveStats]);
+
+  return (
+    <FileStatsContext.Provider
+      value={{
+        stats,
+        updatedAt,
+        retrieveStats,
+        setStats,
+        setUpdatedAt,
+        progressValues,
+        setProgressValues,
+      }}
+    >
+      {children}
+    </FileStatsContext.Provider>
   );
 }

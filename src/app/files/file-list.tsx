@@ -25,7 +25,7 @@ import {
 import { useContext, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { deleteFile } from "./actions";
-import { FilesContext } from "./context";
+import { FilesContext, FileStatsContext } from "./context";
 
 const container = {
   hidden: { opacity: 0 },
@@ -39,6 +39,7 @@ const container = {
 
 export const FileList = () => {
   const fileContext = useContext(FilesContext);
+  const statsContext = useContext(FileStatsContext);
   const files = fileContext?.files || [];
   const setFileList = fileContext?.setFiles || (() => "No files found");
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,6 +53,7 @@ export const FileList = () => {
     startTransition(async () => {
       try {
         await deleteFile(fileId);
+        await statsContext?.retrieveStats();
         setFileList((prev) => prev.filter((file) => file.id !== fileId));
         setIsDeleting(null);
         toast.success("File deleted successfully");

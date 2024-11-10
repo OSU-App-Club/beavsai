@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { PdfRecord, UserStats } from "@/lib/models";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import FilesProvider from "./context";
+import FilesProvider, { FileStatsProvider } from "./context";
 import { FileList } from "./file-list";
 import { FileStats } from "./file-stats";
 
@@ -86,9 +86,12 @@ async function fetchStats(userId: string | undefined): Promise<UserStats> {
 }
 
 async function lastUpdatedTimeStats() {
-  return prisma.courseMaterial.aggregate({
-    _max: { uploadedAt: true },
-  });
+  const time = prisma.courseMaterial
+    .aggregate({
+      _max: { uploadedAt: true },
+    })
+    .then((res) => res._max?.uploadedAt?.getDate());
+  return time;
 }
 
 export default async function FilesPage() {
@@ -125,11 +128,10 @@ export default async function FilesPage() {
     <div>
       <div className="container mx-auto p-6">
         <FilesProvider filesList={files}>
-          <FileStats
-            stats={stats}
-            updatedAt={updatedAt._max.uploadedAt?.getDate()}
-          />
-          <FileList />
+          <FileStatsProvider initialStats={stats} initialUpdatedAt={updatedAt}>
+            <FileStats />
+            <FileList />
+          </FileStatsProvider>
         </FilesProvider>
       </div>
     </div>

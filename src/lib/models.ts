@@ -1,3 +1,4 @@
+import { Message } from "ai";
 import { z } from "zod";
 
 export const pdfUploadSchema = z.object({
@@ -38,4 +39,52 @@ export type UserStats = {
   totalPages: number;
   averageFileSize: number;
   storageUsed: number;
+};
+
+export interface DocumentChunk {
+  id: string;
+  text: string;
+  metadata: {
+    fileName: string;
+    pageNumber: number;
+  };
+}
+
+export type Result = {
+  text: string;
+  fileName: string;
+  pageNumber: number;
+  score: number;
+};
+
+export type CourseMaterialMetadata = {
+  title?: string;
+  description?: string;
+  userId?: string;
+  fileId?: string;
+  pageNumber?: number;
+  fileName?: string;
+  visibility?: string;
+  text?: string;
+  ownerEmailOrId?: string | undefined;
+  id?: string;
+};
+
+export type UploadPDFAction = {
+  fileBuffer: ArrayBuffer;
+  formData: Omit<PdfUploadFormData, "file">;
+};
+
+export type CreateMessageInput = {
+  messages: Message[];
+  chatId: string;
+  text?: string;
+  fileId?: string;
+};
+
+export type CreateChatWithMsg = {
+  userId: string;
+  fileId?: string;
+  initialMessage?: string;
+  initMsgAIResponse?: string;
 };

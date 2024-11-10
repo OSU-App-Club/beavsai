@@ -119,7 +119,7 @@ export default async function ChatPage(props: {
         chatId={chat.id}
         initialMessage={chat.messages[0]?.content}
         initialMessages={chat.messages}
-        fileName={chat.CourseMaterial?.fileName}
+        fileId={chat.CourseMaterial?.id}
         session={session}
       />
     </div>

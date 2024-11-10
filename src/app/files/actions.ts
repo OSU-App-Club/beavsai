@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { PdfRecord, type PdfUploadFormData } from "@/lib/models";
+import { type PdfRecord, type UploadPDFAction } from "@/lib/models";
 import { deletePdfFromR2, uploadPdfToR2 } from "@/lib/pdfStorage";
 import { revalidatePath } from "next/cache";
 
@@ -21,10 +21,6 @@ export async function deleteFile(fileId: string): Promise<void> {
   revalidatePath("/files");
 }
 
-type UploadPDFAction = {
-  fileBuffer: ArrayBuffer;
-  formData: Omit<PdfUploadFormData, "file">;
-};
 export async function uploadPdf({
   fileBuffer,
   formData,
@@ -45,7 +41,6 @@ export async function uploadPdf({
       description,
     );
 
-    revalidatePath("/files");
     return pdfRecord;
   } catch (error) {
     if (error instanceof Error) {

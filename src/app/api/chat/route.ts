@@ -1,108 +1,40 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { CreateMessageInput } from "@/lib/models";
+import {
+  getFileContext,
+  saveMessagesInTransaction,
+} from "@/lib/retrieval-augmentation-gen";
+import { buildPrompt } from "@/lib/utils";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
-import axios from "axios";
-import { type Result } from "../embeddings/route";
 
+/**
+ * POST /api/chat
+ * Processes a message and returns a response.x
+ * @param req The incoming request.
+ * @returns A response indicating the status of the operation.
+ * @throws If an error occurs while processing the request.
+ */
 export async function POST(req: Request) {
   try {
     const session = await auth();
-
     if (!session?.user?.id)
       return new Response("Unauthorized", { status: 401 });
+
     if (req.headers.get("content-type") !== "application/json")
       return new Response("Invalid content type", { status: 400 });
 
-    const { messages, chatId, fileName } = await req.json();
+    const { messages, chatId, fileId }: CreateMessageInput = await req.json();
+    const fileContext = fileId
+      ? await getFileContext(messages[messages.length - 1])
+      : "";
 
-    const chat = await prisma.chat.findUnique({
-      where: {
-        id: chatId,
-        userId: session.user.id,
-      },
-      include: {
-        CourseMaterial: true,
-      },
-    });
-
-    if (!chat) return new Response("Chat not found", { status: 404 });
-
-    const userMessage = messages[messages.length - 1];
-
-    if (userMessage.role === "user") {
-      const existingMessage = await prisma.message.findFirst({
-        where: {
-          chatId,
-          content: userMessage.content,
-          role: "user",
-        },
-      });
-
-      if (!existingMessage) {
-        await prisma.message.create({
-          data: {
-            chatId,
-            content: userMessage.content,
-            role: userMessage.role,
-          },
-        });
-      }
-    }
-
-    let fileContext = "";
-
-    if (fileName) {
-      const message = await prisma.message.findFirst({
-        where: {
-          chatId,
-          role: "user",
-        },
-      });
-      if (!message) throw new Error("No message found");
-
-      const response = await axios.get(
-        `http://localhost:3000/api/embeddings?query=${message.content}`,
-      );
-
-      const results = response.data.results as Result[];
-
-      if (results.length > 0) {
-        // Merge all TopK results into a single string
-        fileContext = results.map((result: Result) => result.text).join("\n");
-      } else {
-        fileContext = "";
-      }
-    }
-
-    const systemPrompt = {
-      role: "system",
-      content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
-        The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
-        AI is a well-behaved and well-mannered individual.
-        AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
-        AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-        AI assistant is a big fan of Pinecone and Vercel.
-        START CONTEXT BLOCK
-        ${fileContext || ""}
-        END OF CONTEXT BLOCK
-        AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
-        If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
-        AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
-        AI assistant will not invent anything that is not drawn directly from the context.`,
-    };
-
+    const systemPrompt = buildPrompt(fileContext);
     const response = await streamText({
       model: openai("gpt-4o-mini"),
       messages: [systemPrompt, ...messages],
       async onFinish({ text }) {
-        await prisma.message.create({
-          data: {
-            chatId,
-            content: text,
-            role: "assistant",
-          },
-        });
+        saveMessagesInTransaction({ messages, chatId, text });
       },
     });
 

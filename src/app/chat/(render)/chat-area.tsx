@@ -15,36 +15,28 @@ import { useChat } from "ai/react";
 import { ChevronDown, ChevronUp, ImageIcon, Send, X } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 interface ChatAreaProps {
   chatId: string;
   initialMessage?: string;
   initialMessages: Message[];
-  fileName?: string;
+  fileId?: string;
   session: Session;
 }
 
 export function ChatArea({
   chatId,
-  initialMessage,
   initialMessages,
-  fileName,
+  fileId,
   session,
 }: ChatAreaProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const welcome = searchParams.get("welcome");
-
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
       api: "/api/chat",
       id: chatId,
       initialMessages: initialMessages
-        .filter(
-          (msg) => !(welcome === "true" && msg.content === initialMessage),
-        )
+        .filter((msg) => msg.chatId === chatId)
         .map((msg) => ({
           id: msg.id,
           content: msg.content,
@@ -52,37 +44,40 @@ export function ChatArea({
         })),
       body: {
         chatId,
-        fileName,
+        fileId,
       },
     });
 
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [imageAttachments, setImageAttachments] = useState<File[]>([]);
-  const [hasProcessedWelcome, setHasProcessedWelcome] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (welcome === "true" && initialMessage && !hasProcessedWelcome) {
-      const simulateMessageSubmit = async () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fakeEvent = new Event("submit") as any;
-        fakeEvent.preventDefault = () => {};
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        handleInputChange({ target: { value: initialMessage } } as any);
-        await handleSubmit(fakeEvent);
-        setHasProcessedWelcome(true);
-        const url = new URL(window.location.href);
-        url.searchParams.delete("welcome");
-        router.replace(url.toString());
-      };
-
-      simulateMessageSubmit();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [welcome, initialMessage, handleSubmit, handleInputChange, router]);
+  /**
+   * TODO: Decide on how to handle the initial message
+    const [hasProcessedWelcome, setHasProcessedWelcome] = useState(false);
+    useEffect(() => {
+        if (welcome === "true" && initialMessage && !hasProcessedWelcome) {
+            const simulateMessageSubmit = async () => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const fakeEvent = new Event("submit") as any;
+                fakeEvent.preventDefault = () => {};
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                handleInputChange({ target: { value: initialMessage } } as any);
+                await handleSubmit(fakeEvent);
+                setHasProcessedWelcome(true);
+                const url = new URL(window.location.href);
+                url.searchParams.delete("welcome");
+                router.replace(url.toString());
+            };
+            
+            simulateMessageSubmit();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [welcome, initialMessage, handleSubmit, handleInputChange, router]);
+    */
 
   useEffect(() => {
     if (isAtBottom) {
@@ -145,7 +140,7 @@ export function ChatArea({
                       src={
                         message.role === "user"
                           ? session?.user?.image
-                          : "/ai-avatar.png"
+                          : "/bot.png"
                       }
                     />
                   ) : (
@@ -158,7 +153,7 @@ export function ChatArea({
                     />
                   )}
                   <AvatarFallback>
-                    {message.role === "user" ? "U" : "AI"}
+                    {message.role === "user" ? "You" : "AI"}
                   </AvatarFallback>
                 </Avatar>
                 <div

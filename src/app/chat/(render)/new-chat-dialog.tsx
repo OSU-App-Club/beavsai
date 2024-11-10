@@ -134,7 +134,7 @@ export function NewChatDialog({
               <SelectContent>
                 {files.map((file) => (
                   <SelectItem key={file.id} value={file.id}>
-                    {file.title} | {file.description}
+                    {file.title}
                   </SelectItem>
                 ))}
               </SelectContent>

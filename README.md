@@ -62,8 +62,6 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
 
 ## Scripts
 
-<!-- Yeah this is messy, but please don't modify it! (since it works) If you do, paper-trail on Discord. Thanks! -->
-
 | Script         | Description                                                                                    |
 | -------------- | ---------------------------------------------------------------------------------------------- |
 | `dev`          | Runs database generation, migration, and starts the Next.js dev server with Turbopack enabled. |
@@ -76,6 +74,7 @@ Beavs AI is an application that provides an AI Chatbot that is knowledgeable abo
 | `db:generate`  | Generates Prisma client based on schema and `.env.local` configuration.                        |
 | `db:migrate`   | Applies migrations for development using `.env.local` configuration.                           |
 | `db:studio`    | Opens Prisma Studio for database management.                                                   |
+| `db:seed`      | Seeds the database with initial data.                                                          |
 
 ## Troubleshooting
 
@@ -118,21 +117,21 @@ If you are new to web development, git, or any of the tools mentioned above, don
 
 _No one is born a master, so don't be afraid to ask questions!_
 
-### Level-based Learning for Beavs AI
+## Level-based Learning for Beavs AI
 
 Choose tasks aligned with your skill level to contribute effectively to Beavs AI:
 
-#### Beginner
+### Beginner
 
 - **Frontend**: Build UI components for displaying syllabus content, style the interface to align with OSU branding, or implement basic API calls to fetch syllabus data.
-- **Backend**: Create straightforward API endpoints for querying syllabus content, validate and handle basic user inputs, or manage simple data interactions with PostgreSQL.
+- **Backend**: Create straightforward API endpoints for querying file content, validate and handle basic user inputs, or manage simple data interactions with PostgreSQL.
 
-#### Intermediate
+### Intermediate
 
 - **Frontend**: Implement interactive UI components for search functionality, handle input validation for queries, or manage component state effectively with React hooks.
 - **Backend**: Integrate with Pinecone for semantic search, manage user sessions with secure practices, or develop API endpoints that retrieve and format contextually relevant content for RAG responses.
 
-#### Advanced
+### Advanced
 
 - **Frontend**: Optimize the rendering of search results for low-latency response times, implement advanced state management for caching syllabus queries, or introduce features that enhance user experience (e.g., query history, autocomplete).
 - **Backend**: Optimize Pinecone and database queries for speed and scalability, implement complex business logic for query preprocessing and RAG workflows, or enhance backend efficiency by streamlining Langchain workflows to dynamically handle complex queries with large language models.

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { ChatList } from "./(render)/chat-list";
 import { WelcomeMessage } from "./(render)/welcome-message";
+import { createChat } from "./actions";
 
 async function fetchChats() {
   const session = await auth();
@@ -59,12 +60,12 @@ export default async function ChatPage() {
           "use server";
           if (!session?.user?.id) throw new Error("Unauthorized");
 
-          const chat = await prisma.chat.create({
-            data: {
-              userId: session.user.id,
-              fileId: fileId || null,
-            },
-          });
+          const chat = await createChat(
+            { userId: session.user.id, fileId },
+            session,
+          );
+
+          if (!chat) throw new Error("Failed to create chat");
 
           return chat;
         }}

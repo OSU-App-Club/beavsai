@@ -82,6 +82,8 @@ model CourseMaterial {
   visibility    Visibility      @default(PRIVATE)
   Chat          Chat[]
   user          User?           @relation(fields: [userId], references: [id])
+  documentIds   String[]        @default([])
+  isIndexed     Boolean         @default(false) @map("is_indexed")
 
   @@map("course_materials")
 }

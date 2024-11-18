@@ -1,6 +1,6 @@
 "use client";
 
-import { FilesContext } from "@/app/files/context";
+import { FilesContext, FileStatsContext } from "@/app/files/context";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -44,6 +44,7 @@ export function PdfUploadDialog({
   mainUploader = false,
 }: PdfUploadDialogProps) {
   const fileContext = useContext(FilesContext);
+  const statsContext = useContext(FileStatsContext);
   const [isOpen, setIsOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -170,6 +171,8 @@ export function PdfUploadDialog({
       if (response.status === 200 && response.data) {
         const pdfRecord = response.data.pdf as PdfRecord;
         fileContext?.addFile(pdfRecord);
+        await statsContext?.retrieveStats();
+        statsContext?.setUpdatedAt(Date.now());
         toast.success(response.data.message);
         setIsOpen(false);
       } else {

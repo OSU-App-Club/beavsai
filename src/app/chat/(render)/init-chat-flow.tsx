@@ -1,11 +1,11 @@
 "use client";
 
+import { CourseMaterial } from "@prisma/client";
 import { Session } from "next-auth";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { createChat } from "../actions";
 import { NewChatDialog } from "./new-chat-dialog";
-import { CourseMaterial } from "@prisma/client";
 
 interface InitialChatFlowProps {
   files: CourseMaterial[];

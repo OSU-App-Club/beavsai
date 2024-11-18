@@ -1,4 +1,4 @@
-import { getPresignedUrl } from "@/lib/cloudFlareClient";
+import { getPresignedUrl } from "@/lib/cloudflare";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 

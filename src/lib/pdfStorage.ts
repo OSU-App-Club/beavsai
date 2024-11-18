@@ -1,4 +1,4 @@
-import { r2Client } from "@/lib/cloudFlareClient";
+import { r2Client } from "@/lib/cloudflare";
 import { type PdfRecord } from "@/lib/models";
 import { prisma } from "@/lib/prisma";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";

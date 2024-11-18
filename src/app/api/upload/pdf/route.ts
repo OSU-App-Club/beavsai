@@ -4,6 +4,7 @@
  * https://nextjs.org/docs/app/building-your-application/routing/route-handlers
  */
 import { uploadPdf } from "@/app/files/actions";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -26,6 +27,8 @@ export async function POST(request: Request) {
       fileBuffer,
       formData: fields,
     });
+    // Invalidate the cache for the files page
+    revalidatePath("/files");
     return NextResponse.json({ message: "Upload successful", pdf: pdfRecord });
   } catch (error) {
     // Something bad happened during the upload?

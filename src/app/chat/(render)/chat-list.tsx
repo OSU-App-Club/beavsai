@@ -41,11 +41,11 @@ export function ChatList({ initialChats, files, onCreateChat }: ChatListProps) {
       const chatIndex = chats.findIndex((chat) => chat.id === chatId);
       const previousChat = chats[chatIndex - 1];
 
-      setChats(chats.filter((chat) => chat.id !== chatId));
-
       await deleteChat(chatId);
+
       toast.success("Chat deleted successfully.");
 
+      setChats(chats.filter((chat) => chat.id !== chatId));
       if (!previousChat) {
         router.push("/chat");
       } else {

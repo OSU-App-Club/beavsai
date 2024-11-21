@@ -1,3 +1,6 @@
+-- CreateExtension
+CREATE EXTENSION IF NOT EXISTS "vector";
+
 -- CreateTable
 CREATE TABLE "chats" (
     "id" TEXT NOT NULL,
@@ -25,6 +28,7 @@ CREATE TABLE "messages" (
 CREATE TABLE "document_chunks" (
     "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
+    "embeddings" vector(1536),
     "pageNumber" INTEGER NOT NULL,
     "materialId" TEXT NOT NULL,
 
@@ -35,6 +39,7 @@ CREATE TABLE "document_chunks" (
 CREATE TABLE "embeddings" (
     "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
+    "embedding" vector(1536),
     "pageNumber" INTEGER NOT NULL,
     "materialId" TEXT NOT NULL,
 
